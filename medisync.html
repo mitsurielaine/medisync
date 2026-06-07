@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediSync — Clínica Granados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0F7A8A; --teal-dark:#0A5560; --teal-deep:#073d46;
+    --mint:#2BB99A; --mint-soft:#d6f1e9; --coral:#EF8B6B; --coral-soft:#fce3da; --amber:#E9A23B;
+    --bg:#F1F6F7; --surface:#ffffff; --surface-2:#f7fbfb; --line:#e2ecee;
+    --ink:#16363c; --ink-soft:#48696f; --muted:#7e979c;
+    --shadow:0 1px 2px rgba(11,60,66,.04),0 8px 24px -12px rgba(11,60,66,.18);
+    --shadow-lg:0 30px 60px -28px rgba(8,61,70,.45); --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+  h1,h2,h3,h4,.brandname{font-family:'Outfit',sans-serif;letter-spacing:-.01em}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:#cbdde0;border-radius:20px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* ============ LOGIN ============ */
+  #login{position:fixed;inset:0;display:flex;align-items:stretch;
+    background:radial-gradient(1200px 600px at 85% -10%, rgba(43,185,154,.18), transparent 60%),
+      radial-gradient(900px 500px at -5% 110%, rgba(15,122,138,.22), transparent 55%),
+      linear-gradient(135deg,#0a5560,#073d46 60%,#06343b);z-index:50}
+  .login-art{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:54px 56px;color:#eafbfb;position:relative;overflow:hidden}
+  .login-art::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);background-size:26px 26px;opacity:.6}
+  .login-logo{display:flex;align-items:center;gap:13px;position:relative}
+  .login-art h1{font-size:clamp(34px,4vw,52px);line-height:1.05;margin-top:auto;font-weight:800;position:relative;max-width:13ch}
+  .login-art h1 span{color:var(--mint)}
+  .login-art p{margin-top:20px;max-width:42ch;color:#bfe2e3;font-size:16px;line-height:1.65;position:relative}
+  .login-stats{display:flex;gap:34px;margin-top:38px;position:relative}
+  .login-stats b{font-family:'Outfit';font-size:30px;display:block;font-weight:700}
+  .login-stats small{color:#9fcccd;font-size:12.5px;letter-spacing:.02em}
+  .login-foot{position:relative;font-size:12.5px;color:#80b3b5;margin-top:30px}
+  .login-panel{width:min(480px,42vw);background:var(--surface);display:flex;flex-direction:column;justify-content:center;padding:32px clamp(34px,4vw,64px);box-shadow:var(--shadow-lg);overflow-y:auto}
+  .login-panel .kicker{color:var(--teal);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+  .login-panel h2{font-size:30px;margin:10px 0 6px;font-weight:700}
+  .login-panel .sub{color:var(--muted);font-size:14.5px;margin-bottom:26px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:7px}
+  .field input,.field select,.field textarea{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font-family:inherit;font-size:14.5px;color:var(--ink);background:var(--surface-2);transition:.18s}
+  .field textarea{resize:vertical;min-height:70px}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal);background:#fff;box-shadow:0 0 0 4px rgba(15,122,138,.1)}
+  .field input.err,.field select.err,.field textarea.err{border-color:var(--coral);background:#fff6f3}
+  .role-pick{margin-bottom:22px}
+  .role-pick > span{font-size:12.5px;font-weight:600;color:var(--ink-soft);display:block;margin-bottom:9px}
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .role{border:1.5px solid var(--line);border-radius:13px;padding:13px 8px;text-align:center;background:var(--surface-2);transition:.16s;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .role svg{width:22px;height:22px;color:var(--muted);transition:.16s}
+  .role b{font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+  .role:hover{border-color:#bcd6d9}
+  .role.active{border-color:var(--teal);background:#eef7f8}
+  .role.active svg{color:var(--teal)} .role.active b{color:var(--teal-dark)}
+  .btn-primary{width:100%;background:var(--teal);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:15px;font-family:'Outfit';transition:.18s}
+  .btn-primary:hover{background:var(--teal-dark);transform:translateY(-1px);box-shadow:0 12px 24px -12px rgba(10,85,96,.6)}
+  .btn-primary:disabled{opacity:.6;cursor:default;transform:none}
+  .login-hint{margin-top:18px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6}
+  .auth-link{color:var(--teal);font-weight:700;cursor:pointer;text-decoration:none}
+  .auth-link:hover{text-decoration:underline}
+  .conn{margin-top:14px;font-size:11.5px;display:flex;align-items:center;gap:7px;justify-content:center;color:var(--muted)}
+  .conn i{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+  .conn.on i{background:var(--mint)}
+
+  /* ============ APP SHELL ============ */
+  #app{display:none;height:100vh;grid-template-columns:256px 1fr}
+  #app.show{display:grid}
+  .sidebar{background:linear-gradient(180deg,#0c606d,#083f48);color:#dcf0f1;display:flex;flex-direction:column;padding:22px 16px;position:relative;z-index:5}
+  .sb-logo{display:flex;align-items:center;gap:11px;padding:4px 8px 22px}
+  .sb-logo .brandname{color:#fff;font-size:21px;font-weight:800}
+  .sb-logo .brandname span{color:var(--mint)}
+  .sb-sub{font-size:11px;color:#79b6b9;padding:0 8px 18px;letter-spacing:.02em}
+  .nav{display:flex;flex-direction:column;gap:3px;flex:1}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;color:#bfe1e3;font-size:14px;font-weight:600;transition:.15s;text-align:left;width:100%}
+  .nav-item svg{width:19px;height:19px;flex-shrink:0}
+  .nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav-item.active{background:var(--mint);color:#073d46}
+  .nav-item .badge{margin-left:auto;background:var(--coral);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .nav-item.active .badge{background:#073d46;color:#fff}
+  .sb-user{margin-top:14px;padding:12px;border-radius:14px;background:rgba(255,255,255,.06);display:flex;align-items:center;gap:11px}
+  .sb-avatar{width:38px;height:38px;border-radius:50%;background:var(--mint);color:#073d46;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Outfit';flex-shrink:0}
+  .sb-user .nm{font-size:13px;font-weight:700;color:#fff}
+  .sb-user .rl{font-size:11px;color:#8fc3c5}
+  .sb-logout{margin-left:auto;color:#8fc3c5;padding:6px;border-radius:8px;display:flex}
+  .sb-logout:hover{background:rgba(255,255,255,.1);color:#fff}
+
+  .main{overflow-y:auto;height:100vh;background:var(--bg)}
+  .topbar{position:sticky;top:0;z-index:4;background:rgba(241,246,247,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:18px 34px;display:flex;align-items:center;gap:18px}
+  .topbar h2{font-size:22px;font-weight:700}
+  .topbar .crumb{font-size:12.5px;color:var(--muted);font-weight:600}
+  .search{margin-left:auto;display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px 14px;width:260px;color:var(--muted)}
+  .search input{border:none;background:none;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);width:100%}
+  .top-bell{position:relative;background:#fff;border:1px solid var(--line);width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:var(--ink-soft)}
+  .top-bell:hover{border-color:#bcd6d9}
+  .top-bell .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;background:var(--coral);border-radius:50%;border:2px solid #fff}
+
+  .content{padding:26px 34px 60px}
+  .view{display:none;animation:fade .35s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .grid{display:grid;gap:18px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .card-pad{padding:22px}
+  .sec-title{font-size:16px;font-weight:700;margin-bottom:3px}
+  .sec-sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+
+  .kpis{grid-template-columns:repeat(4,1fr);margin-bottom:20px}
+  .kpi{padding:20px;position:relative;overflow:hidden}
+  .kpi .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .kpi .ic svg{width:21px;height:21px}
+  .kpi .val{font-family:'Outfit';font-size:30px;font-weight:700;line-height:1}
+  .kpi .lbl{font-size:13px;color:var(--ink-soft);margin-top:5px;font-weight:600}
+  .kpi .trend{font-size:11.5px;font-weight:700;margin-top:10px;display:inline-flex;align-items:center;gap:4px}
+  .trend.up{color:var(--mint)} .trend.down{color:var(--coral)}
+  .ic.teal{background:#e3f1f3;color:var(--teal)}
+  .ic.mint{background:var(--mint-soft);color:#168f74}
+  .ic.coral{background:var(--coral-soft);color:#d3623f}
+  .ic.amber{background:#fbeed4;color:#bd7c14}
+
+  .two-col{grid-template-columns:1.6fr 1fr}
+  .row-between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+  .med{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .med:last-child{border-bottom:none}
+  .med .time{font-family:'Outfit';font-weight:700;font-size:15px;width:62px;color:var(--teal-dark)}
+  .med .pill-ic{width:40px;height:40px;border-radius:11px;background:#eef7f8;display:flex;align-items:center;justify-content:center;color:var(--teal);flex-shrink:0}
+  .med .info{flex:1}
+  .med .info b{font-size:14.5px;font-weight:700}
+  .med .info small{display:block;color:var(--muted);font-size:12.5px;margin-top:1px}
+  .chk{width:30px;height:30px;border-radius:9px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;transition:.18s;color:transparent;flex-shrink:0}
+  .chk:hover{border-color:var(--mint)}
+  .med.done .chk{background:var(--mint);border-color:var(--mint);color:#fff}
+  .med.done .info b{color:var(--muted);text-decoration:line-through}
+  .med.done{opacity:.7}
+  .icon-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);background:#fff;transition:.15s;flex-shrink:0}
+  .icon-btn svg{width:15px;height:15px}
+  .icon-btn:hover{border-color:#bcd6d9;color:var(--ink)}
+  .icon-btn.danger:hover{border-color:var(--coral);color:var(--coral);background:#fff6f3}
+
+  .tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px}
+  .tag.ok{background:var(--mint-soft);color:#13815f}
+  .tag.warn{background:#fbeed4;color:#a76b0c}
+  .tag.bad{background:var(--coral-soft);color:#c5512f}
+  .tag.info{background:#e3f1f3;color:var(--teal-dark)}
+  .tag.dot::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .tag svg{width:13px;height:13px;flex-shrink:0}
+
+  .appt{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}
+  .appt:last-child{border-bottom:none}
+  .appt .date{text-align:center;width:54px;flex-shrink:0}
+  .appt .date .d{font-family:'Outfit';font-size:22px;font-weight:700;line-height:1;color:var(--teal-dark)}
+  .appt .date .m{font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.05em}
+  .appt .body{flex:1}
+  .appt .body b{font-size:14.5px}
+  .appt .body small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+  .appt-actions{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;align-items:center}
+
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;padding:0 14px 12px}
+  td{padding:14px;border-top:1px solid var(--line);font-size:13.5px}
+  tr.rowh:hover td{background:var(--surface-2)}
+  .pname{display:flex;align-items:center;gap:11px}
+  .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:'Outfit';color:#fff;flex-shrink:0}
+  .pname small{color:var(--muted);font-size:12px;font-weight:500}
+
+  .adh{display:flex;align-items:center;gap:10px;min-width:140px}
+  .adh .bar{flex:1;height:7px;background:#eef2f3;border-radius:10px;overflow:hidden}
+  .adh .fill{height:100%;border-radius:10px}
+  .adh b{font-family:'Outfit';font-size:13px;width:38px;text-align:right}
+
+  .hist{border-left:2px solid var(--line);padding-left:22px;margin-left:6px;position:relative}
+  .hist-item{position:relative;padding-bottom:22px}
+  .hist-item:last-child{padding-bottom:0}
+  .hist-item::before{content:"";position:absolute;left:-29px;top:3px;width:13px;height:13px;border-radius:50%;background:#fff;border:3px solid var(--teal)}
+  .hist-item.alert::before{border-color:var(--coral)}
+  .hist-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .hist-head b{font-size:14.5px}
+  .hist-head .dt{font-size:12px;color:var(--muted);font-weight:600}
+  .hist-body{margin-top:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:13px;padding:14px 16px;font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+  .meds-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .chip{background:#eef7f8;color:var(--teal-dark);font-size:12px;font-weight:600;padding:5px 11px;border-radius:8px;display:inline-flex;align-items:center;gap:6px}
+  .chip svg{width:14px;height:14px;flex-shrink:0}
+
+  .barchart{display:flex;align-items:flex-end;gap:14px;height:200px;padding-top:10px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;justify-content:flex-end}
+  .bstack{width:100%;max-width:46px;border-radius:8px 8px 0 0;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;transition:.4s}
+  .bseg{width:100%}
+  .bcol small{font-size:11.5px;color:var(--muted);font-weight:600}
+  .legend{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft);font-weight:600}
+  .legend i{width:11px;height:11px;border-radius:3px;display:block}
+  .donut{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .donut .hole{width:104px;height:104px;background:#fff;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .donut .hole b{font-family:'Outfit';font-size:28px;font-weight:700;color:var(--teal-dark)}
+  .donut .hole small{font-size:11px;color:var(--muted);font-weight:600}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:11px;font-weight:700;font-size:13.5px;font-family:'Outfit';transition:.16s}
+  .btn svg{width:16px;height:16px}
+  .btn.sm{padding:7px 12px;font-size:12.5px;border-radius:9px}
+  .btn.sm svg{width:14px;height:14px}
+  .btn.solid{background:var(--teal);color:#fff}
+  .btn.solid:hover{background:var(--teal-dark)}
+  .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink-soft)}
+  .btn.ghost:hover{border-color:#bcd6d9;color:var(--ink)}
+  .btn.mint{background:var(--mint);color:#063b30}
+  .btn.mint:hover{filter:brightness(.95)}
+  .btn.coral{background:var(--coral-soft);color:#c5512f}
+  .btn.coral:hover{filter:brightness(.97)}
+
+  .overlay{position:fixed;inset:0;background:rgba(8,52,59,.45);backdrop-filter:blur(3px);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
+  .overlay.show{display:flex;animation:fade .25s}
+  .modal{background:#fff;border-radius:22px;width:min(520px,100%);box-shadow:var(--shadow-lg);overflow:hidden;animation:pop .3s cubic-bezier(.2,.9,.3,1.2);max-height:92vh;display:flex;flex-direction:column}
+  @keyframes pop{from{transform:scale(.94) translateY(10px);opacity:0}to{transform:none;opacity:1}}
+  .modal-head{padding:22px 24px 0;display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0}
+  .modal-head h3{font-size:19px}
+  .modal-head p{font-size:13px;color:var(--muted);margin-top:3px;max-width:42ch}
+  .modal-x{color:var(--muted);padding:4px;border-radius:8px}
+  .modal-x svg{width:20px;height:20px}
+  .modal-x:hover{background:var(--surface-2);color:var(--ink)}
+  .modal-body{padding:18px 24px 24px;overflow-y:auto}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .form-grid .field.full{grid-column:1/-1}
+  .modal-foot{display:flex;gap:10px;margin-top:8px}
+  .modal-foot .btn{flex:1;justify-content:center}
+
+  .toast-wrap{position:fixed;bottom:26px;right:26px;z-index:80;display:flex;flex-direction:column;gap:10px}
+  .toast{background:#0c606d;color:#eafbfb;padding:14px 18px;border-radius:13px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:11px;font-size:13.5px;font-weight:600;animation:slidein .3s;max-width:340px}
+  .toast svg{width:19px;height:19px;color:var(--mint);flex-shrink:0}
+  @keyframes slidein{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+
+  .empty{text-align:center;padding:30px;color:var(--muted);font-size:13.5px}
+
+  @media(max-width:980px){
+    .login-art{display:none}.login-panel{width:100%}
+    #app.show{grid-template-columns:1fr}.sidebar{display:none}
+    .kpis{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}
+    .search{display:none}.form-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="login">
+  <div class="login-art">
+    <div class="login-logo">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="6" fill="#2BB99A"/><path d="M12 7v10M7 12h10" stroke="#073d46" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span class="brandname" style="color:#fff;font-size:24px;font-weight:800">Medi<span style="color:#2BB99A">Sync</span></span>
+    </div>
+    <h1>Tu historial clínico, <span>siempre sincronizado.</span></h1>
+    <p>Plataforma inteligente de gestión y seguimiento del historial clínico de la Clínica Granados. Datos persistentes en Google Sheets: pacientes, médicos, citas y tratamientos.</p>
+    <div class="login-stats">
+      <div><b>&minus;38%</b><small>Citas incumplidas</small></div>
+      <div><b>+27%</b><small>Adherencia tratamiento</small></div>
+      <div><b>6</b><small>Módulos integrados</small></div>
+    </div>
+    <div class="login-foot">Proyecto Ingeniería de Software · UPSE · Facultad de Sistemas y Telecomunicaciones</div>
+  </div>
+
+  <div class="login-panel">
+
+    <!-- ===== INICIAR SESIÓN ===== -->
+    <div id="auth-login">
+      <span class="kicker">Bienvenido</span>
+      <h2>Inicia sesión</h2>
+      <p class="sub">Accede con tu correo y contraseña registrados.</p>
+
+      <div class="role-pick">
+        <span>Ingresar como</span>
+        <div class="roles">
+          <button class="role active" data-role="paciente" onclick="pickRole(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <b>Paciente</b>
+          </button>
+          <button class="role" data-role="medico" onclick="pickRole(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v6a6 6 0 0 0 12 0V3"/><path d="M12 15v3a4 4 0 0 0 8 0v-1"/><circle cx="20" cy="14" r="2"/></svg>
+            <b>Médico</b>
+          </button>
+          <button class="role" data-role="admin" onclick="pickRole(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/></svg>
+            <b>Admin</b>
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Usuario / Correo</label>
+        <input id="user-input" type="text" placeholder="usuario@granados.med.ec">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input id="pass-input" type="password" placeholder="••••••••" value="demo1234">
+      </div>
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">Ingresar al sistema</button>
+      <p class="login-hint">¿No tienes cuenta? <a class="auth-link" onclick="showRegister()">Regístrate aquí</a></p>
+      <p class="login-hint" style="margin-top:6px">Cuentas demo: <b>maria.gomez@granados.med.ec</b> · <b>c.reyes@granados.med.ec</b> · <b>admin@granados.med.ec</b> — contraseña <b>demo1234</b></p>
+      <div class="conn" id="conn"><i></i><span>Verificando conexión…</span></div>
+    </div>
+
+    <!-- ===== CREAR CUENTA ===== -->
+    <div id="auth-register" style="display:none">
+      <span class="kicker">Nuevo usuario</span>
+      <h2>Crea tu cuenta</h2>
+      <p class="sub">Regístrate para acceder a tu portal en la Clínica Granados.</p>
+
+      <div class="role-pick">
+        <span>Tipo de cuenta</span>
+        <div class="roles" style="grid-template-columns:repeat(2,1fr)">
+          <button class="role active" data-rrole="paciente" onclick="pickRegRole(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <b>Paciente</b>
+          </button>
+          <button class="role" data-rrole="medico" onclick="pickRegRole(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v6a6 6 0 0 0 12 0V3"/><path d="M12 15v3a4 4 0 0 0 8 0v-1"/><circle cx="20" cy="14" r="2"/></svg>
+            <b>Médico</b>
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Nombre completo *</label>
+        <input id="reg-name" type="text" placeholder="Ej. Juan Pérez">
+      </div>
+      <div class="field">
+        <label>Correo (será tu usuario) *</label>
+        <input id="reg-email" type="email" placeholder="tucorreo@ejemplo.com">
+      </div>
+
+      <!-- Campos según tipo de cuenta -->
+      <div id="reg-fields-paciente">
+        <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+          <div class="field"><label>Cédula</label><input id="reg-ci" type="text" placeholder="09xxxxxxx"></div>
+          <div class="field"><label>Edad</label><input id="reg-age" type="number" placeholder="45"></div>
+        </div>
+        <div class="field"><label>Condiciones (separadas por coma)</label><input id="reg-cond" type="text" placeholder="Opcional — Ej. HTA, Diabetes"></div>
+      </div>
+      <div id="reg-fields-medico" style="display:none">
+        <div class="field"><label>Especialidad *</label>
+          <select id="reg-spec">
+            <option>Medicina General</option><option>Cardiología</option><option>Nefrología</option>
+            <option>Nutrición</option><option>Laboratorio</option><option>Terapia Física</option>
+            <option>Endocrinología</option><option>Cirugía Plástica</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+        <div class="field"><label>Contraseña *</label><input id="reg-pass" type="password" placeholder="••••••••"></div>
+        <div class="field"><label>Confirmar *</label><input id="reg-pass2" type="password" placeholder="••••••••"></div>
+      </div>
+
+      <button class="btn-primary" id="reg-btn" onclick="doRegister()">Crear cuenta e ingresar</button>
+      <p class="login-hint">¿Ya tienes cuenta? <a class="auth-link" onclick="showLogin()">Inicia sesión</a></p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="6" fill="#2BB99A"/><path d="M12 7v10M7 12h10" stroke="#073d46" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span class="brandname">Medi<span>Sync</span></span>
+    </div>
+    <div class="sb-sub">CLÍNICA GRANADOS</div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-av">P</div>
+      <div><div class="nm" id="sb-name">—</div><div class="rl" id="sb-role">—</div></div>
+      <button class="sb-logout" title="Cerrar sesión" onclick="logout()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="crumb" id="crumb">Inicio</div><h2 id="page-title">Resumen general</h2></div>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
+        <input placeholder="Buscar paciente, cita, medicamento…">
+      </div>
+      <button class="top-bell" onclick="toast('Tienes 3 notificaciones nuevas','bell')">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+    </header>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+/* ============================================================
+   MediSync — Frontend conectado a Google Sheets (Apps Script)
+   ============================================================ */
+
+const ICO = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 21V12h6v9"/></svg>',
+  hist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  track:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 5-6"/></svg>',
+  report:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  pill:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="4" transform="rotate(45 12 12)"/><path d="m8.5 8.5 7 7" transform="rotate(45 12 12)"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+  stetho:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v6a6 6 0 0 0 12 0V3"/><path d="M12 15v3a4 4 0 0 0 8 0v-1"/><circle cx="20" cy="14" r="2"/></svg>',
+  userplus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>',
+};
+
+/* ============================================================
+   STORE — capa de datos: Google Sheets API + caché + pub/sub
+   ============================================================ */
+const Store = (() => {
+
+  /* 🔗🔗🔗  PEGA AQUÍ LA URL DE TU APPS SCRIPT (termina en /exec) 🔗🔗🔗
+     Déjala vacía ('') para usar el MODO DEMO (datos locales, no persisten). */
+  const CONFIG = { API_URL:'' };
+
+  const cache = {usuarios:[],pacientes:[],medicos:[],citas:[],prescripciones:[],historial:[]};
+  const subs = []; const notify = () => subs.forEach(f => f());
+  const connected = () => !!String(CONFIG.API_URL).trim();
+  let _seq = 1; const lid = p => p + '_' + Date.now().toString(36) + (_seq++);
+  const splitList = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
+  const truthy = v => v === true || String(v).toUpperCase() === 'TRUE';
+  const PALETTE = ['#0F7A8A','#2BB99A','#E9A23B','#EF8B6B','#0A5560','#168f74'];
+  const colorFor = s => PALETTE[[...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0) % PALETTE.length];
+
+  /* Mapea las columnas (en español) de las hojas al modelo interno */
+  function normalize(d){
+    return {
+      usuarios: (d.usuarios||[]).map(u=>({id:u.id,name:u.nombre,email:u.correo,role:u.rol,refId:u.refId,status:u.estado})),
+      pacientes: (d.pacientes||[]).map(r=>({
+        id:r.id, name:r.nombre, ci:r.ci, age:Number(r.edad)||0, blood:r.sangre,
+        allergies:r.alergias, conditions:splitList(r.condiciones), email:r.correo,
+        adh:Number(r.adherencia)||0, last:r.ultimaVisita, color:r.color||colorFor(r.nombre)})),
+      medicos: (d.medicos||[]).map(r=>({id:r.id,name:r.nombre,specialty:r.especialidad,email:r.correo,color:r.color||colorFor(r.nombre)})),
+      citas: (d.citas||[]).map(r=>({id:r.id,patientId:r.pacienteId,doctorId:r.medicoId,specialty:r.especialidad,date:String(r.fecha).slice(0,10),time:r.hora,state:r.estado})),
+      prescripciones: (d.prescripciones||[]).map(r=>({id:r.id,patientId:r.pacienteId,name:r.nombre,dose:r.dosis,time:r.hora,taken:truthy(r.tomado)})),
+      historial: (d.historial||[]).map(r=>({id:r.id,patientId:r.pacienteId,date:r.fecha,doctor:r.doctor,dx:r.diagnostico,note:r.nota,meds:splitList(r.medicamentos),alert:truthy(r.alerta)})),
+    };
+  }
+
+  async function apiGet(){
+    const r = await fetch(CONFIG.API_URL + '?action=getAll&_=' + Date.now());
+    return r.json();
+  }
+  async function apiPost(action, payload){
+    const r = await fetch(CONFIG.API_URL, {method:'POST', body: JSON.stringify({action, payload})});
+    return r.json();
+  }
+  async function reload(){
+    const d = await apiGet();
+    if(d && d.ok !== false){ Object.assign(cache, normalize(d)); notify(); }
+    return d;
+  }
+
+  function seedDemo(){
+    const data = {
+      medicos:[
+        {id:'med_1',nombre:'Dra. Carla Reyes',especialidad:'Cardiología',correo:'c.reyes@granados.med.ec',color:'#2BB99A'},
+        {id:'med_2',nombre:'Dr. Fernando Granados',especialidad:'Medicina General',correo:'f.granados@granados.med.ec',color:'#0F7A8A'},
+        {id:'med_3',nombre:'Dr. Luis Tomalá',especialidad:'Laboratorio',correo:'l.tomala@granados.med.ec',color:'#168f74'},
+        {id:'med_4',nombre:'Dra. Ana Pinto',especialidad:'Nutrición',correo:'a.pinto@granados.med.ec',color:'#E9A23B'},
+      ],
+      pacientes:[
+        {id:'pac_1',nombre:'María Gómez',ci:'092145xxx',edad:54,sangre:'O+',alergias:'Penicilina',condiciones:'HTA, Diabetes tipo 2',correo:'maria.gomez@granados.med.ec',adherencia:91,ultimaVisita:'28 May',color:'#0F7A8A'},
+        {id:'pac_2',nombre:'Carlos Rodríguez',ci:'091877xxx',edad:61,sangre:'A+',alergias:'—',condiciones:'Insuf. renal',correo:'c.rodriguez@mail.com',adherencia:64,ultimaVisita:'30 May',color:'#EF8B6B'},
+        {id:'pac_3',nombre:'José Loor',ci:'090654xxx',edad:48,sangre:'O-',alergias:'Sulfas',condiciones:'Diabetes tipo 2',correo:'j.loor@mail.com',adherencia:52,ultimaVisita:'22 May',color:'#E9A23B'},
+        {id:'pac_4',nombre:'Lucía Vera',ci:'092900xxx',edad:45,sangre:'AB+',alergias:'—',condiciones:'Hipotiroidismo',correo:'l.vera@mail.com',adherencia:96,ultimaVisita:'02 Jun',color:'#0F7A8A'},
+      ],
+      usuarios:[
+        {id:'u1',nombre:'María Gómez',correo:'maria.gomez@granados.med.ec',rol:'paciente',refId:'pac_1',estado:'Activo'},
+        {id:'u2',nombre:'Dra. Carla Reyes',correo:'c.reyes@granados.med.ec',rol:'medico',refId:'med_1',estado:'Activo'},
+        {id:'u3',nombre:'Ing. Jorge Salazar',correo:'admin@granados.med.ec',rol:'admin',refId:'',estado:'Activo'},
+      ],
+      citas:[
+        {id:'cit_1',pacienteId:'pac_1',medicoId:'med_1',especialidad:'Cardiología · Control de presión',fecha:'2026-06-11',hora:'09:15',estado:'confirmada'},
+        {id:'cit_2',pacienteId:'pac_1',medicoId:'med_3',especialidad:'Laboratorio · Perfil lipídico',fecha:'2026-06-18',hora:'08:30',estado:'confirmada'},
+        {id:'cit_3',pacienteId:'pac_1',medicoId:'med_4',especialidad:'Nutrición · Seguimiento',fecha:'2026-07-02',hora:'16:45',estado:'pendiente'},
+      ],
+      prescripciones:[
+        {id:'rx_1',pacienteId:'pac_1',nombre:'Losartán 50mg',dosis:'1 tableta · con el desayuno',hora:'08:00',tomado:true},
+        {id:'rx_2',pacienteId:'pac_1',nombre:'Metformina 850mg',dosis:'1 tableta · después de comer',hora:'08:00',tomado:true},
+        {id:'rx_3',pacienteId:'pac_1',nombre:'Atorvastatina 20mg',dosis:'1 tableta · con el almuerzo',hora:'14:00',tomado:false},
+        {id:'rx_4',pacienteId:'pac_1',nombre:'Omega-3',dosis:'1 cápsula · antes de dormir',hora:'21:00',tomado:false},
+      ],
+      historial:[
+        {id:'h1',pacienteId:'pac_1',fecha:'28 May 2026',doctor:'Dra. Carla Reyes — Cardiología',diagnostico:'Hipertensión arterial controlada',nota:'Paciente estable. Presión 128/82.',medicamentos:'Losartán 50mg, Atorvastatina 20mg',alerta:false},
+        {id:'h2',pacienteId:'pac_1',fecha:'14 Abr 2026',doctor:'Dr. Luis Tomalá — Laboratorio',diagnostico:'Colesterol elevado',nota:'Colesterol total 232 mg/dL. Se inicia Atorvastatina.',medicamentos:'Atorvastatina 20mg',alerta:true},
+        {id:'h3',pacienteId:'pac_1',fecha:'15 Ene 2026',doctor:'Dra. Carla Reyes — Cardiología',diagnostico:'Diagnóstico inicial: HTA + Diabetes tipo 2',nota:'Inicio de tratamiento con Losartán y Metformina.',medicamentos:'Losartán 50mg, Metformina 850mg',alerta:false},
+      ],
+    };
+    Object.assign(cache, normalize(data));
+    notify();
+  }
+
+  async function init(){
+    if(connected()){
+      try{ const d = await reload(); if(!d || d.ok===false) throw new Error('respuesta inválida'); setConn(true); }
+      catch(e){ setConn(false, true); seedDemo(); CONFIG.API_URL=''; }
+    } else { setConn(false); seedDemo(); }
+  }
+
+  function setConn(on, failed){
+    const el = document.getElementById('conn'); if(!el) return;
+    el.classList.toggle('on', !!on);
+    el.querySelector('span').textContent = on ? 'Conectado a Google Sheets'
+      : failed ? 'Sin conexión — modo demo (no persiste)' : 'Modo demo — datos locales (no persiste)';
+  }
+
+  async function login(correo, password, rol){
+    if(connected()){
+      try{ return await apiPost('login', {correo, password, rol}); }
+      catch(e){ return {ok:false, error:'No se pudo contactar el servidor'}; }
+    }
+    const u = cache.usuarios.find(x => x.email && x.email.toLowerCase() === String(correo).toLowerCase());
+    if(u) return {ok:true, user:{nombre:u.name, correo:u.email, rol:u.role, refId:u.refId}};
+    return {ok:true, user:{nombre:'Usuario Demo', correo, rol:rol||'paciente', refId:(cache.pacientes[0]||{}).id||''}};
+  }
+
+  async function mutate(action, payload, localFn){
+    if(connected()){
+      try{ const res = await apiPost(action, payload); await reload(); return res; }
+      catch(e){ toast('Error al guardar en la base de datos','alert'); return {ok:false}; }
+    }
+    if(localFn) localFn();
+    notify();
+    return {ok:true, demo:true};
+  }
+
+  /* Registro de cuenta nueva desde la pantalla de inicio */
+  async function register(role, data){
+    const action = role === 'medico' ? 'addDoctor' : 'addPatient';
+    if(connected()){
+      try{
+        const res = await apiPost(action, data);
+        if(res && res.ok) await reload();
+        return res;
+      }catch(e){ return {ok:false, error:'No se pudo contactar el servidor'}; }
+    }
+    // Modo demo: validar correo y agregar a la caché local
+    if(data.email && cache.usuarios.some(u => (u.email||'').toLowerCase() === data.email.toLowerCase()))
+      return {ok:false, error:'Ese correo ya está registrado'};
+    if(role === 'medico'){
+      const m = {id:lid('d'), name:data.name, specialty:data.specialty, email:data.email||'', color:colorFor(data.name)};
+      cache.medicos.push(m);
+      cache.usuarios.push({id:lid('u'), name:data.name, email:data.email, role:'medico', refId:m.id, status:'Activo'});
+    } else {
+      const p = {id:lid('p'), name:data.name, ci:data.ci||'—', age:+data.age||0, blood:data.blood||'—',
+        allergies:data.allergies||'—', conditions:splitList(data.conditions), email:data.email||'',
+        adh:100, last:'Hoy', color:colorFor(data.name)};
+      cache.pacientes.push(p);
+      cache.usuarios.push({id:lid('u'), name:data.name, email:data.email, role:'paciente', refId:p.id, status:'Activo'});
+    }
+    notify();
+    return {ok:true, demo:true};
+  }
+
+  return {
+    CONFIG, colorFor,
+    subscribe: f => subs.push(f),
+    init, login, register, reload,
+    connected,
+    patients: () => cache.pacientes,
+    doctors: () => cache.medicos,
+    appointments: () => cache.citas,
+    prescriptions: () => cache.prescripciones,
+    patient: id => cache.pacientes.find(p => p.id === id),
+    doctor: id => cache.medicos.find(d => d.id === id),
+    patientName: id => (cache.pacientes.find(p => p.id === id) || {}).name || '—',
+    doctorName: id => (cache.medicos.find(d => d.id === id) || {}).name || '—',
+    prescriptionsOf: id => cache.prescripciones.filter(r => r.patientId === id),
+    historyOf: id => cache.historial.filter(h => h.patientId === id),
+
+    addPatient: d => mutate('addPatient', d, () => {
+      const p = {id:lid('p'), name:d.name, ci:d.ci||'—', age:+d.age||0, blood:d.blood||'—',
+        allergies:d.allergies||'—', conditions:splitList(d.conditions), email:d.email||'',
+        adh:100, last:'Hoy', color:colorFor(d.name)};
+      cache.pacientes.push(p);
+      cache.usuarios.push({id:lid('u'), name:d.name, email:d.email, role:'paciente', refId:p.id, status:'Activo'});
+    }),
+    removePatient: id => mutate('deletePatient', {id}, () => {
+      const i = cache.pacientes.findIndex(p => p.id === id); if(i>-1) cache.pacientes.splice(i,1);
+    }),
+    addDoctor: d => mutate('addDoctor', d, () => {
+      const m = {id:lid('d'), name:d.name, specialty:d.specialty, email:d.email||'', color:colorFor(d.name)};
+      cache.medicos.push(m);
+      cache.usuarios.push({id:lid('u'), name:d.name, email:d.email, role:'medico', refId:m.id, status:'Activo'});
+    }),
+    removeDoctor: id => mutate('deleteDoctor', {id}, () => {
+      const i = cache.medicos.findIndex(d => d.id === id); if(i>-1) cache.medicos.splice(i,1);
+    }),
+    addAppointment: d => mutate('addAppointment', d, () => {
+      cache.citas.unshift({id:lid('a'), patientId:d.patientId, doctorId:d.doctorId, specialty:d.specialty, date:d.date, time:d.time, state:d.state||'pendiente'});
+    }),
+    setAppointmentState: (id, state) => mutate('setAppointmentState', {id, estado:state}, () => {
+      const a = cache.citas.find(x => x.id === id); if(a) a.state = state;
+    }),
+    removeAppointment: id => mutate('deleteAppointment', {id}, () => {
+      const i = cache.citas.findIndex(a => a.id === id); if(i>-1) cache.citas.splice(i,1);
+    }),
+    addPrescription: d => mutate('addPrescription', d, () => {
+      cache.prescripciones.push({id:lid('rx'), patientId:d.patientId, name:d.name, dose:d.dose, time:d.time||'08:00', taken:false});
+    }),
+    toggleTaken: id => mutate('toggleTaken', {id}, () => {
+      const r = cache.prescripciones.find(x => x.id === id); if(r) r.taken = !r.taken;
+    }),
+    removePrescription: id => mutate('deletePrescription', {id}, () => {
+      const i = cache.prescripciones.findIndex(r => r.id === id); if(i>-1) cache.prescripciones.splice(i,1);
+    }),
+  };
+})();
+
+/* ============================================================
+   MODAL — constructor de formularios reutilizable
+   ============================================================ */
+const Modal = (() => {
+  const root = document.getElementById('modal-root');
+  function fieldHTML(f){
+    const cls = f.full ? 'field full' : 'field';
+    let control;
+    if(f.type === 'select'){
+      control = `<select name="${f.key}">${f.options.map(o=>{
+        const v=o.value??o, l=o.label??o; return `<option value="${v}" ${f.value===v?'selected':''}>${l}</option>`;
+      }).join('')}</select>`;
+    } else if(f.type === 'textarea'){
+      control = `<textarea name="${f.key}" placeholder="${f.placeholder||''}">${f.value||''}</textarea>`;
+    } else {
+      control = `<input name="${f.key}" type="${f.type||'text'}" placeholder="${f.placeholder||''}" value="${f.value||''}">`;
+    }
+    return `<div class="${cls}"><label>${f.label}${f.required?' *':''}</label>${control}</div>`;
+  }
+  function form({title, subtitle, fields, submitLabel='Guardar', onSubmit}){
+    const ov = document.createElement('div');
+    ov.className = 'overlay show';
+    ov.innerHTML = `<div class="modal">
+      <div class="modal-head"><div><h3>${title}</h3>${subtitle?`<p>${subtitle}</p>`:''}</div>
+        <button class="modal-x" data-close>${ICO.x}</button></div>
+      <div class="modal-body"><div class="form-grid">${fields.map(fieldHTML).join('')}</div>
+        <div class="modal-foot"><button class="btn ghost" data-close>Cancelar</button>
+        <button class="btn solid" data-submit>${submitLabel}</button></div></div></div>`;
+    root.appendChild(ov);
+    const close = () => ov.remove();
+    ov.querySelectorAll('[data-close]').forEach(b => b.onclick = close);
+    ov.addEventListener('click', e => { if(e.target === ov) close(); });
+    ov.querySelector('[data-submit]').onclick = () => {
+      const vals = {}; let ok = true;
+      fields.forEach(f => {
+        const inp = ov.querySelector(`[name="${f.key}"]`);
+        const v = (typeof inp.value === 'string') ? inp.value.trim() : inp.value;
+        if(f.required && !v){ inp.classList.add('err'); ok = false; } else inp.classList.remove('err');
+        vals[f.key] = v;
+      });
+      if(!ok){ toast('Completa los campos obligatorios','alert'); return; }
+      close(); onSubmit(vals);
+    };
+  }
+  return { form };
+})();
+
+/* ============================================================
+   FORMS — definición de cada formulario por entidad
+   ============================================================ */
+const Forms = {
+  patient(){
+    Modal.form({ title:'Registrar paciente', subtitle:'Se crea su ficha y su usuario de acceso (contraseña inicial: demo1234).',
+      submitLabel:'Registrar paciente',
+      fields:[
+        {key:'name', label:'Nombre completo', required:true, full:true, placeholder:'Ej. Juan Pérez'},
+        {key:'ci', label:'Cédula (CI)', placeholder:'09xxxxxxx'},
+        {key:'age', label:'Edad', type:'number', placeholder:'45'},
+        {key:'blood', label:'Tipo de sangre', type:'select', options:['O+','O-','A+','A-','B+','B-','AB+','AB-']},
+        {key:'allergies', label:'Alergias', placeholder:'Ninguna'},
+        {key:'email', label:'Correo (usuario)', type:'email', full:true, placeholder:'paciente@correo.com'},
+        {key:'conditions', label:'Condiciones (separadas por coma)', full:true, placeholder:'HTA, Diabetes tipo 2'},
+      ],
+      onSubmit: v => { Store.addPatient(v); toast(`Paciente ${v.name} registrado`,'userplus'); }
+    });
+  },
+  doctor(){
+    Modal.form({ title:'Registrar médico', subtitle:'Se crea su perfil y su usuario de acceso (contraseña inicial: demo1234).',
+      submitLabel:'Registrar médico',
+      fields:[
+        {key:'name', label:'Nombre completo', required:true, full:true, placeholder:'Ej. Dr. Juan Pérez'},
+        {key:'specialty', label:'Especialidad', required:true, type:'select',
+          options:['Medicina General','Cardiología','Nefrología','Nutrición','Laboratorio','Terapia Física','Cirugía Plástica','Endocrinología']},
+        {key:'email', label:'Correo (usuario)', type:'email', placeholder:'medico@granados.med.ec'},
+      ],
+      onSubmit: v => { Store.addDoctor(v); toast(`${v.name} agregado al staff`,'stetho'); }
+    });
+  },
+  appointment(presetPatientId){
+    const pats = Store.patients(), docs = Store.doctors();
+    if(!pats.length || !docs.length){ toast('Registra al menos un paciente y un médico','alert'); return; }
+    const tomorrow = new Date(Date.now()+86400000*3).toISOString().slice(0,10);
+    Modal.form({ title:'Agendar nueva cita', subtitle:'Selecciona paciente, médico, fecha y hora.', submitLabel:'Crear cita',
+      fields:[
+        {key:'patientId', label:'Paciente', required:true, full:true, type:'select', value:presetPatientId||pats[0].id, options:pats.map(p=>({value:p.id,label:p.name}))},
+        {key:'doctorId', label:'Médico', required:true, full:true, type:'select', options:docs.map(d=>({value:d.id,label:`${d.name} · ${d.specialty}`}))},
+        {key:'reason', label:'Motivo / detalle', full:true, placeholder:'Control de presión'},
+        {key:'date', label:'Fecha', type:'date', value:tomorrow},
+        {key:'time', label:'Hora', type:'select', options:['08:30','09:15','10:00','11:30','15:00','16:45']},
+      ],
+      onSubmit: v => {
+        const doc = Store.doctor(v.doctorId);
+        const spec = `${doc.specialty}${v.reason?' · '+v.reason:''}`;
+        Store.addAppointment({patientId:v.patientId, doctorId:v.doctorId, specialty:spec, date:v.date, time:v.time, state:'pendiente'});
+        toast('Cita creada — pendiente de confirmación','cal');
+      }
+    });
+  },
+  prescription(presetPatientId){
+    const pats = Store.patients();
+    if(!pats.length){ toast('Registra al menos un paciente','alert'); return; }
+    Modal.form({ title:'Nueva prescripción', subtitle:'Asigna un medicamento; genera un recordatorio automático.', submitLabel:'Prescribir',
+      fields:[
+        {key:'patientId', label:'Paciente', required:true, full:true, type:'select', value:presetPatientId||pats[0].id, options:pats.map(p=>({value:p.id,label:p.name}))},
+        {key:'name', label:'Medicamento y dosis', required:true, full:true, placeholder:'Losartán 50mg'},
+        {key:'dose', label:'Indicación', full:true, placeholder:'1 tableta · con el desayuno'},
+        {key:'time', label:'Horario de toma', type:'select', options:['08:00','12:00','14:00','18:00','20:00','21:00']},
+      ],
+      onSubmit: v => { Store.addPrescription(v); toast(`Prescripción registrada para ${Store.patientName(v.patientId)}`,'pill'); }
+    });
+  },
+};
+
+/* ============================================================
+   APP — sesión, navegación y router
+   ============================================================ */
+const App = { role:'paciente', view:'inicio', patientId:null, user:null };
+
+const ROLES = {
+  paciente:{ label:'Paciente', nav:['inicio','historial','recordatorios','citas'] },
+  medico:{ label:'Médico', nav:['inicio','seguimiento','historial','citas','reportes'] },
+  admin:{ label:'Administrador', nav:['inicio','reportes','usuarios','citas'] },
+};
+const NAVDEF = {
+  inicio:{t:'Inicio', label:'Resumen', ic:'home'},
+  historial:{t:'Historial Clínico', label:'Historial Clínico Digital', ic:'hist'},
+  recordatorios:{t:'Recordatorios', label:'Recordatorios Inteligentes', ic:'bell'},
+  citas:{t:'Citas Médicas', label:'Gestión de Citas', ic:'cal'},
+  seguimiento:{t:'Seguimiento', label:'Seguimiento de Tratamientos', ic:'track'},
+  reportes:{t:'Reportes', label:'Reportes y Estadísticas', ic:'report'},
+  usuarios:{t:'Usuarios', label:'Gestión de Usuarios y Accesos', ic:'users'},
+};
+
+function pickRole(el){
+  document.querySelectorAll('.role').forEach(r => r.classList.remove('active'));
+  el.classList.add('active');
+  App.role = el.dataset.role;
+  const ph = {paciente:'maria.gomez@granados.med.ec', medico:'c.reyes@granados.med.ec', admin:'admin@granados.med.ec'};
+  document.getElementById('user-input').value = ph[App.role];
+}
+document.getElementById('user-input').value = 'maria.gomez@granados.med.ec';
+
+/* ---------- Alternar entre Iniciar sesión y Crear cuenta ---------- */
+App.regRole = 'paciente';
+function showRegister(){
+  document.getElementById('auth-login').style.display = 'none';
+  document.getElementById('auth-register').style.display = 'block';
+}
+function showLogin(){
+  document.getElementById('auth-register').style.display = 'none';
+  document.getElementById('auth-login').style.display = 'block';
+}
+function pickRegRole(el){
+  document.querySelectorAll('[data-rrole]').forEach(r => r.classList.remove('active'));
+  el.classList.add('active');
+  App.regRole = el.dataset.rrole;
+  document.getElementById('reg-fields-paciente').style.display = App.regRole==='paciente' ? 'block' : 'none';
+  document.getElementById('reg-fields-medico').style.display = App.regRole==='medico' ? 'block' : 'none';
+}
+
+async function doRegister(){
+  const role = App.regRole;
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+
+  if(!name || !email || !pass){ toast('Completa nombre, correo y contraseña','alert'); return; }
+  if(!/^\S+@\S+\.\S+$/.test(email)){ toast('Ingresa un correo válido','alert'); return; }
+  if(pass.length < 4){ toast('La contraseña debe tener al menos 4 caracteres','alert'); return; }
+  if(pass !== pass2){ toast('Las contraseñas no coinciden','alert'); return; }
+
+  const data = {name, email, password:pass};
+  if(role === 'medico'){
+    data.specialty = document.getElementById('reg-spec').value;
+  } else {
+    data.ci = document.getElementById('reg-ci').value.trim();
+    data.age = document.getElementById('reg-age').value.trim();
+    data.conditions = document.getElementById('reg-cond').value.trim();
+  }
+
+  const btn = document.getElementById('reg-btn');
+  btn.textContent = 'Creando cuenta…'; btn.disabled = true;
+  await readyPromise;
+  const res = await Store.register(role, data);
+  btn.textContent = 'Crear cuenta e ingresar'; btn.disabled = false;
+
+  if(!res || !res.ok){ toast(res && res.error ? res.error : 'No se pudo crear la cuenta','alert'); return; }
+
+  toast(`¡Cuenta creada! Bienvenido(a), ${name}`,'check');
+  // Inicia sesión automáticamente con la cuenta recién creada
+  App.role = role;
+  const loginRes = await Store.login(email, pass, role);
+  if(loginRes && loginRes.ok){
+    setSession(loginRes.user);
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    buildNav(); go('inicio');
+  } else {
+    showLogin();
+    document.getElementById('user-input').value = email;
+    document.getElementById('pass-input').value = pass;
+  }
+}
+
+async function doLogin(){
+  const correo = document.getElementById('user-input').value.trim();
+  const pass = document.getElementById('pass-input').value;
+  const btn = document.getElementById('login-btn');
+  btn.textContent = 'Verificando…'; btn.disabled = true;
+  await readyPromise;                       // asegura que los datos estén cargados
+  const res = await Store.login(correo, pass, App.role);
+  btn.textContent = 'Ingresar al sistema'; btn.disabled = false;
+  if(!res || !res.ok){ toast(res && res.error ? res.error : 'Credenciales inválidas','alert'); return; }
+  setSession(res.user);
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  buildNav(); go('inicio');
+}
+function setSession(user){
+  const role = user.rol || user.role || App.role;
+  const name = user.nombre || user.name || 'Usuario';
+  App.role = role;
+  App.user = {name, role, refId:user.refId||'', av:initials(name),
+    color: role==='admin' ? '#EF8B6B' : role==='medico' ? '#2BB99A' : '#0F7A8A'};
+  App.patientId = (role==='paciente' && user.refId) ? user.refId : ((Store.patients()[0]||{}).id || null);
+}
+function logout(){
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('login').style.display = 'flex';
+}
+
+function buildNav(){
+  const r = ROLES[App.role];
+  document.getElementById('nav').innerHTML = r.nav.map(k => {
+    const d = NAVDEF[k];
+    return `<button class="nav-item" data-view="${k}" onclick="go('${k}')">${ICO[d.ic]}<span>${d.t}</span>${badgeHTML(k)}</button>`;
+  }).join('');
+  document.getElementById('sb-name').textContent = App.user.name;
+  document.getElementById('sb-role').textContent = r.label;
+  const av = document.getElementById('sb-av'); av.textContent = App.user.av; av.style.background = App.user.color;
+}
+function badgeHTML(k){
+  if(k !== 'recordatorios') return '';
+  const pend = Store.prescriptionsOf(App.patientId).filter(r => !r.taken).length;
+  return pend ? `<span class="badge">${pend}</span>` : '';
+}
+function refreshBadges(){
+  const b = document.querySelector('.nav-item[data-view="recordatorios"]'); if(!b) return;
+  const old = b.querySelector('.badge'); if(old) old.remove();
+  const pend = Store.prescriptionsOf(App.patientId).filter(r => !r.taken).length;
+  if(pend){ const s = document.createElement('span'); s.className = 'badge'; s.textContent = pend; b.appendChild(s); }
+}
+
+function go(view){
+  App.view = view;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
+  const d = NAVDEF[view];
+  document.getElementById('page-title').textContent = d.label;
+  document.getElementById('crumb').textContent = 'MediSync · ' + d.t;
+  render();
+  document.querySelector('.main').scrollTo({top:0, behavior:'smooth'});
+}
+function render(){ document.getElementById('content').innerHTML = `<div class="view active">${VIEWS[App.view]()}</div>`; }
+
+Store.subscribe(() => {
+  if(document.getElementById('app').classList.contains('show')){ render(); refreshBadges(); }
+});
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+const VIEWS = {
+  inicio(){ return App.role==='paciente' ? dashPaciente() : App.role==='medico' ? dashMedico() : dashAdmin(); },
+  historial: () => viewHistorial(),
+  recordatorios: () => viewRecordatorios(),
+  citas: () => viewCitas(),
+  seguimiento: () => viewSeguimiento(),
+  reportes: () => viewReportes(),
+  usuarios: () => viewUsuarios(),
+};
+
+function kpi(ic,cls,val,lbl,trend){
+  return `<div class="card kpi"><div class="ic ${cls}">${ICO[ic]}</div>
+    <div class="val">${val}</div><div class="lbl">${lbl}</div>
+    ${trend?`<div class="trend ${trend.dir}">${trend.dir==='up'?'▲':'▼'} ${trend.txt}</div>`:''}</div>`;
+}
+
+function dashPaciente(){
+  const meds = Store.prescriptionsOf(App.patientId);
+  const pend = meds.filter(m=>!m.taken).length, total = meds.length;
+  const next = Store.appointments().filter(a=>a.patientId===App.patientId && a.state!=='cancelada').length;
+  return `
+  <div class="grid kpis">
+    ${kpi('pill','teal',`${total-pend}/${total}`,'Medicamentos de hoy',{dir:'up',txt:'al día'})}
+    ${kpi('cal','mint',next,'Próximas citas',{dir:'up',txt:'esta semana'})}
+    ${kpi('track','amber','91%','Adherencia mensual',{dir:'up',txt:'+6% vs abril'})}
+    ${kpi('heart','coral','128/82','Última presión',{dir:'up',txt:'normal'})}
+  </div>
+  <div class="grid two-col">
+    <div class="card card-pad">
+      <div class="row-between"><div><div class="sec-title">Recordatorios de hoy</div><div class="sec-sub">Marca tus medicamentos a medida que los tomas</div></div>
+        <button class="btn ghost" onclick="go('recordatorios')">Ver todos</button></div>
+      ${medList(App.patientId)}
+    </div>
+    <div class="card card-pad">
+      <div class="sec-title">Próximas citas</div><div class="sec-sub">Confirmadas y pendientes</div>
+      ${apptList(Store.appointments().filter(a=>a.patientId===App.patientId).slice(0,3))}
+      <button class="btn mint" style="width:100%;justify-content:center;margin-top:14px" onclick="Forms.appointment(App.patientId)">${ICO.plus} Agendar nueva cita</button>
+    </div>
+  </div>`;
+}
+function dashMedico(){
+  const att = Store.patients().filter(p=>p.adh<70);
+  const today = Store.appointments().filter(a=>a.date==='2026-06-11');
+  return `
+  <div class="grid kpis">
+    ${kpi('users','teal',Store.patients().length,'Pacientes activos',{dir:'up',txt:'registrados'})}
+    ${kpi('cal','mint',Store.appointments().filter(a=>a.state==='confirmada').length,'Citas confirmadas',{dir:'up',txt:'agenda activa'})}
+    ${kpi('alert','coral',att.length,'Alertas de adherencia',{dir:'down',txt:'requieren contacto'})}
+    ${kpi('track','amber','78%','Adherencia promedio',{dir:'up',txt:'+3% semana'})}
+  </div>
+  <div class="grid two-col">
+    <div class="card card-pad">
+      <div class="row-between"><div><div class="sec-title">Pacientes que requieren seguimiento</div><div class="sec-sub">Adherencia por debajo del 70%</div></div>
+      <button class="btn ghost" onclick="go('seguimiento')">Panel completo</button></div>
+      ${patientTable(att, false)}
+    </div>
+    <div class="card card-pad">
+      <div class="row-between"><div><div class="sec-title">Agenda del 11 de junio</div><div class="sec-sub">Citas registradas</div></div>
+        <button class="btn solid sm" onclick="Forms.appointment()">${ICO.plus} Cita</button></div>
+      ${apptList(today)}
+    </div>
+  </div>`;
+}
+function dashAdmin(){
+  return `
+  <div class="grid kpis">
+    ${kpi('users','teal',Store.patients().length,'Pacientes registrados',{dir:'up',txt:'en base de datos'})}
+    ${kpi('cal','mint',Store.appointments().length,'Citas registradas',{dir:'up',txt:'históricas + activas'})}
+    ${kpi('alert','coral',Store.appointments().filter(a=>a.state==='cancelada').length,'Citas canceladas',{dir:'down',txt:'este periodo'})}
+    ${kpi('report','amber',Store.doctors().length,'Médicos activos',{dir:'up',txt:'en staff'})}
+  </div>
+  <div class="grid two-col">
+    <div class="card card-pad">
+      <div class="sec-title">Citas: cumplidas vs incumplidas</div><div class="sec-sub">Últimos 6 meses</div>
+      ${barChart()}
+    </div>
+    <div class="card card-pad" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <div class="sec-title" style="align-self:flex-start">Tasa de asistencia</div>
+      <div class="sec-sub" style="align-self:flex-start">Promedio general del sistema</div>
+      ${donut(89)}
+      <p style="font-size:13px;color:var(--ink-soft);margin-top:16px;line-height:1.6;max-width:30ch">La automatización de recordatorios redujo el ausentismo de un <b style="color:var(--coral)">27%</b> a un <b style="color:var(--mint)">11%</b>.</p>
+    </div>
+  </div>`;
+}
+
+function medList(pid){
+  const meds = Store.prescriptionsOf(pid);
+  if(!meds.length) return `<div class="empty">Sin prescripciones registradas.</div>`;
+  const canManage = App.role !== 'paciente';
+  return meds.map(m => `
+    <div class="med ${m.taken?'done':''}">
+      <div class="time">${m.time}</div>
+      <div class="pill-ic">${ICO.pill}</div>
+      <div class="info"><b>${m.name}</b><small>${m.dose}</small></div>
+      ${canManage?`<button class="icon-btn danger" title="Eliminar" onclick="Store.removePrescription('${m.id}')">${ICO.trash}</button>`:''}
+      <button class="chk" title="Marcar como tomado" onclick="onToggleMed('${m.id}')">${ICO.check}</button>
+    </div>`).join('');
+}
+function apptList(arr){
+  if(!arr.length) return `<div class="empty">Sin citas registradas.</div>`;
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const canConfirm = App.role==='medico' || App.role==='admin';
+  return arr.map(a => {
+    const ds = String(a.date||'').slice(0,10);
+    const dt = ds ? new Date(ds+'T00:00') : null;
+    const d = dt && !isNaN(dt) ? String(dt.getDate()).padStart(2,'0') : '--';
+    const m = dt && !isNaN(dt) ? months[dt.getMonth()] : '';
+    const stTag = a.state==='confirmada'?'ok':a.state==='cancelada'?'bad':'warn';
+    const who = a.doctorId ? Store.doctorName(a.doctorId) : '—';
+    const patientLine = (App.role!=='paciente') ? `<small>Paciente: ${Store.patientName(a.patientId)}</small>` : '';
+    let actions = '';
+    if(a.state==='pendiente' && canConfirm) actions += `<button class="btn mint sm" onclick="Store.setAppointmentState('${a.id}','confirmada')">${ICO.check} Confirmar</button>`;
+    if(a.state!=='cancelada') actions += `<button class="btn coral sm" onclick="Store.setAppointmentState('${a.id}','cancelada')">Cancelar</button>`;
+    return `<div class="appt">
+      <div class="date"><div class="d">${d}</div><div class="m">${m}</div></div>
+      <div class="body"><b>${who}</b><small>${a.specialty||''}</small>${patientLine}
+        <div class="appt-actions"><span class="tag info">${ICO.clock} ${a.time}</span><span class="tag ${stTag} dot">${a.state}</span></div>
+        ${actions?`<div class="appt-actions">${actions}</div>`:''}
+      </div></div>`;
+  }).join('');
+}
+function patientTable(arr, withActions){
+  if(!arr.length) return `<div class="empty">No hay pacientes en esta lista.</div>`;
+  return `<table><thead><tr><th>Paciente</th><th>Condición</th><th>Adherencia</th><th>Última visita</th>${withActions?'<th></th>':''}</tr></thead><tbody>
+    ${arr.map(p=>`<tr class="rowh">
+      <td><div class="pname"><div class="av" style="background:${p.color}">${initials(p.name)}</div><div><b>${p.name}</b><br><small>CI ${p.ci}</small></div></div></td>
+      <td>${(p.conditions||[]).map(c=>`<span class="tag info">${c}</span>`).join(' ')||'—'}</td>
+      <td>${adhBar(p.adh)}</td>
+      <td style="color:var(--muted)">${p.last}</td>
+      ${withActions?`<td style="text-align:right;white-space:nowrap">
+        <button class="btn ghost sm" onclick="Forms.prescription('${p.id}')">${ICO.pill} Prescribir</button>
+        <button class="btn ghost sm" onclick="Forms.appointment('${p.id}')">${ICO.cal} Cita</button>
+      </td>`:''}
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function initials(name){ return String(name).split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(); }
+function adhBar(v){
+  const col = v>=80?'var(--mint)': v>=70?'var(--amber)':'var(--coral)';
+  return `<div class="adh"><div class="bar"><div class="fill" style="width:${v}%;background:${col}"></div></div><b style="color:${col}">${v}%</b></div>`;
+}
+
+function viewHistorial(){
+  const pid = App.role==='paciente' ? App.patientId : (App._histPatient || (Store.patients()[0]||{}).id);
+  App._histPatient = pid;
+  const p = Store.patient(pid);
+  if(!p) return `<div class="card card-pad"><div class="empty">No hay pacientes registrados.</div></div>`;
+  const hist = Store.historyOf(pid);
+  const selector = App.role!=='paciente'
+    ? `<select onchange="App._histPatient=this.value; render();" style="padding:9px 13px;border:1.5px solid var(--line);border-radius:11px;font-family:inherit;font-size:13px;background:#fff;color:var(--ink)">
+        ${Store.patients().map(x=>`<option value="${x.id}" ${x.id===pid?'selected':''}>${x.name}</option>`).join('')}</select>` : '';
+  return `
+  <div class="card card-pad" style="margin-bottom:18px">
+    <div class="row-between">
+      <div class="pname"><div class="av" style="background:${p.color};width:48px;height:48px;font-size:16px">${initials(p.name)}</div>
+        <div><div class="sec-title" style="margin:0">${p.name}</div><div class="sec-sub" style="margin:0">CI ${p.ci} · ${p.age} años · ${p.blood} · Alergias: ${p.allergies}</div></div></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${(p.conditions||[]).map(c=>`<span class="tag info">${c}</span>`).join('')}
+        ${selector}
+        ${App.role!=='paciente'?`<button class="btn solid sm" onclick="Forms.prescription('${pid}')">${ICO.plus} Prescripción</button>`:''}
+      </div></div>
+  </div>
+  <div class="card card-pad">
+    <div class="sec-title">Línea de tiempo clínica</div><div class="sec-sub">Diagnósticos, prescripciones y notas médicas</div>
+    ${hist.length?`<div class="hist">${hist.map(h=>`
+      <div class="hist-item ${h.alert?'alert':''}">
+        <div class="hist-head"><b>${h.dx}</b> ${h.alert?'<span class="tag bad">Alerta</span>':''}<span class="dt">${h.date} · ${h.doctor}</span></div>
+        <div class="hist-body">${h.note}${h.meds.length?`<div class="meds-chips">${h.meds.map(m=>`<span class="chip">${ICO.pill} ${m}</span>`).join('')}</div>`:''}</div>
+      </div>`).join('')}</div>`:`<div class="empty">Este paciente aún no tiene entradas en su historial.</div>`}
+  </div>`;
+}
+
+function viewRecordatorios(){
+  const meds = Store.prescriptionsOf(App.patientId);
+  return `
+  <div class="grid kpis" style="grid-template-columns:repeat(3,1fr)">
+    ${kpi('pill','teal',meds.filter(m=>m.taken).length+'/'+meds.length,'Tomados hoy')}
+    ${kpi('clock','amber',meds.filter(m=>!m.taken).length,'Pendientes')}
+    ${kpi('bell','mint',Store.appointments().filter(a=>a.patientId===App.patientId && a.state==='pendiente').length,'Citas por confirmar')}
+  </div>
+  <div class="grid two-col">
+    <div class="card card-pad">
+      <div class="sec-title">Medicamentos de hoy</div><div class="sec-sub">El sistema envía una alerta en cada horario. Marca al tomarlos.</div>
+      ${medList(App.patientId)}
+    </div>
+    <div class="card card-pad">
+      <div class="sec-title">Alertas activas</div><div class="sec-sub">Generadas automáticamente por MediSync</div>
+      <div class="med" style="border:none"><div class="pill-ic" style="background:var(--coral-soft);color:#d3623f">${ICO.alert}</div><div class="info"><b>Procedimiento pendiente</b><small>Hemoglobina glicosilada — vence en 3 días</small></div></div>
+      <div class="med" style="border:none"><div class="pill-ic" style="background:#fbeed4;color:#bd7c14">${ICO.cal}</div><div class="info"><b>Cita próxima</b><small>Revisa tus citas confirmadas</small></div></div>
+      <div class="med" style="border:none"><div class="pill-ic" style="background:var(--mint-soft);color:#168f74">${ICO.check}</div><div class="info"><b>Tratamiento al día</b><small>Has cumplido el 91% de tus tomas este mes</small></div></div>
+      <button class="btn ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="toast('Recordatorio pospuesto 1 hora','clock')">Posponer alerta 1 hora</button>
+    </div>
+  </div>`;
+}
+
+function viewCitas(){
+  const all = Store.appointments();
+  const list = App.role==='paciente' ? all.filter(a=>a.patientId===App.patientId) : all;
+  return `
+  <div class="card card-pad" style="margin-bottom:18px"><div class="row-between">
+    <div><div class="sec-title">${App.role==='paciente'?'Mis citas médicas':'Gestión de citas'}</div><div class="sec-sub">Agenda, confirma o cancela citas</div></div>
+    <button class="btn solid" onclick="Forms.appointment(${App.role==='paciente'?'App.patientId':'undefined'})">${ICO.plus} Agendar cita</button>
+  </div></div>
+  <div class="grid kpis" style="grid-template-columns:repeat(3,1fr)">
+    ${kpi('cal','teal',list.length,'Citas totales')}
+    ${kpi('check','mint',list.filter(a=>a.state==='confirmada').length,'Confirmadas')}
+    ${kpi('clock','amber',list.filter(a=>a.state==='pendiente').length,'Pendientes')}
+  </div>
+  <div class="card card-pad">${apptList(list)}</div>`;
+}
+
+function viewSeguimiento(){
+  const pts = Store.patients();
+  return `
+  <div class="card card-pad" style="margin-bottom:18px"><div class="row-between">
+    <div><div class="sec-title">Seguimiento de tratamientos</div><div class="sec-sub">Registra pacientes, prescribe medicamentos y monitorea la adherencia</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn ghost" onclick="Forms.prescription()">${ICO.pill} Prescribir</button>
+      <button class="btn solid" onclick="Forms.patient()">${ICO.userplus} Registrar paciente</button>
+    </div></div></div>
+  <div class="grid kpis" style="grid-template-columns:repeat(3,1fr)">
+    ${kpi('users','teal',pts.length,'Pacientes en seguimiento')}
+    ${kpi('alert','coral',pts.filter(p=>p.adh<70).length,'Adherencia < 70%')}
+    ${kpi('track','mint','78%','Adherencia promedio')}
+  </div>
+  <div class="card card-pad">
+    <div class="sec-title">Panel de adherencia</div><div class="sec-sub">Los pacientes con adherencia &lt; 70% se marcan en alerta</div>
+    ${patientTable(pts, true)}
+  </div>`;
+}
+
+function viewReportes(){
+  return `
+  <div class="grid kpis">
+    ${kpi('cal','teal',Store.appointments().length,'Citas registradas')}
+    ${kpi('check','mint',Store.appointments().filter(a=>a.state==='confirmada').length,'Confirmadas')}
+    ${kpi('alert','coral',Store.appointments().filter(a=>a.state==='cancelada').length,'Canceladas')}
+    ${kpi('pill','amber',Store.prescriptions().length,'Prescripciones')}
+  </div>
+  <div class="grid two-col">
+    <div class="card card-pad">
+      <div class="row-between"><div><div class="sec-title">Cumplimiento de citas</div><div class="sec-sub">Cumplidas vs incumplidas · 6 meses</div></div>
+        <button class="btn ghost" onclick="toast('Reporte exportado a PDF','check')">Exportar PDF</button></div>
+      ${barChart()}
+    </div>
+    <div class="card card-pad" style="display:flex;flex-direction:column;align-items:center">
+      <div class="sec-title" style="align-self:flex-start">Adherencia global</div><div class="sec-sub" style="align-self:flex-start">Pacientes con tratamiento activo</div>
+      ${donut(78)}
+      <div class="legend" style="margin-top:18px"><span><i style="background:var(--mint)"></i>Adherentes 78%</span><span><i style="background:var(--coral)"></i>En riesgo 22%</span></div>
+    </div>
+  </div>
+  <div class="card card-pad" style="margin-top:18px">
+    <div class="sec-title">Medicamentos más prescritos</div><div class="sec-sub">Top 5 del mes</div>
+    ${rankBar([['Losartán 50mg',186,'#0F7A8A'],['Metformina 850mg',164,'#2BB99A'],['Atorvastatina 20mg',142,'#E9A23B'],['Omeprazol 20mg',98,'#EF8B6B'],['Levotiroxina 100µg',73,'#0F7A8A']])}
+  </div>`;
+}
+
+function viewUsuarios(){
+  const docs = Store.doctors(), pats = Store.patients();
+  return `
+  <div class="card card-pad" style="margin-bottom:18px"><div class="row-between">
+    <div><div class="sec-title">Gestión de usuarios y accesos</div><div class="sec-sub">Control de acceso basado en roles (RBAC)</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn ghost" onclick="Forms.doctor()">${ICO.stetho} Nuevo médico</button>
+      <button class="btn solid" onclick="Forms.patient()">${ICO.userplus} Nuevo paciente</button>
+    </div></div></div>
+
+  <div class="card card-pad" style="margin-bottom:18px">
+    <div class="sec-title">Médicos (${docs.length})</div><div class="sec-sub">Profesionales con acceso al sistema</div>
+    <table><thead><tr><th>Médico</th><th>Especialidad</th><th>Correo</th><th></th></tr></thead><tbody>
+    ${docs.map(d=>`<tr class="rowh">
+      <td><div class="pname"><div class="av" style="background:${d.color}">${initials(d.name)}</div><b>${d.name}</b></div></td>
+      <td><span class="tag info">${d.specialty}</span></td>
+      <td style="color:var(--muted)">${d.email}</td>
+      <td style="text-align:right"><button class="icon-btn danger" title="Eliminar" onclick="Store.removeDoctor('${d.id}')">${ICO.trash}</button></td>
+    </tr>`).join('')||`<tr><td colspan="4"><div class="empty">Sin médicos registrados.</div></td></tr>`}
+    </tbody></table>
+  </div>
+
+  <div class="card card-pad">
+    <div class="sec-title">Pacientes (${pats.length})</div><div class="sec-sub">Fichas clínicas registradas</div>
+    <table><thead><tr><th>Paciente</th><th>Condición</th><th>Correo</th><th>Estado</th><th></th></tr></thead><tbody>
+    ${pats.map(p=>`<tr class="rowh">
+      <td><div class="pname"><div class="av" style="background:${p.color}">${initials(p.name)}</div><div><b>${p.name}</b><br><small>CI ${p.ci}</small></div></div></td>
+      <td>${(p.conditions||[]).map(c=>`<span class="tag info">${c}</span>`).join(' ')||'—'}</td>
+      <td style="color:var(--muted)">${p.email||'—'}</td>
+      <td><span class="tag ok dot">Activo</span></td>
+      <td style="text-align:right"><button class="icon-btn danger" title="Eliminar" onclick="Store.removePatient('${p.id}')">${ICO.trash}</button></td>
+    </tr>`).join('')||`<tr><td colspan="5"><div class="empty">Sin pacientes registrados.</div></td></tr>`}
+    </tbody></table>
+  </div>`;
+}
+
+function barChart(){
+  const data=[['Ene',46,8],['Feb',49,6],['Mar',44,11],['Abr',51,7],['May',54,5],['Jun',45,4]];
+  const max=60;
+  return `<div class="barchart">${data.map(([mo,ok,no])=>`
+    <div class="bcol"><div class="bstack" style="height:${(ok+no)/max*100}%">
+      <div class="bseg" style="background:var(--coral);height:${no/(ok+no)*100}%"></div>
+      <div class="bseg" style="background:var(--teal);height:${ok/(ok+no)*100}%"></div>
+    </div><small>${mo}</small></div>`).join('')}</div>
+  <div class="legend"><span><i style="background:var(--teal)"></i>Cumplidas</span><span><i style="background:var(--coral)"></i>Incumplidas</span></div>`;
+}
+function donut(p){
+  return `<div class="donut" style="background:conic-gradient(var(--mint) 0 ${p}%, #e9eff0 ${p}% 100%)"><div class="hole"><b>${p}%</b><small>adherencia</small></div></div>`;
+}
+function rankBar(arr){
+  const max=Math.max(...arr.map(a=>a[1]));
+  return arr.map(([n,v,c])=>`
+    <div style="display:flex;align-items:center;gap:14px;padding:9px 0">
+      <div style="width:150px;font-size:13.5px;font-weight:600">${n}</div>
+      <div style="flex:1;height:11px;background:#eef2f3;border-radius:10px;overflow:hidden"><div style="width:${v/max*100}%;height:100%;background:${c};border-radius:10px"></div></div>
+      <b style="font-family:'Outfit';font-size:13.5px;width:40px;text-align:right">${v}</b>
+    </div>`).join('');
+}
+
+/* ============================================================
+   INTERACCIONES
+   ============================================================ */
+async function onToggleMed(rxid){
+  const r = Store.prescriptions().find(x => x.id === rxid);
+  const name = r ? r.name : 'Medicamento';
+  const willTake = r ? !r.taken : true;
+  await Store.toggleTaken(rxid);
+  if(willTake) toast(`✓ ${name} registrado como tomado`,'check');
+}
+
+function toast(msg, ic='check'){
+  const wrap = document.getElementById('toasts');
+  const el = document.createElement('div'); el.className = 'toast';
+  el.innerHTML = `${ICO[ic]||ICO.check}<span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.transition='.3s';el.style.opacity='0';el.style.transform='translateX(40px)';setTimeout(()=>el.remove(),300)},3200);
+}
+
+document.getElementById('pass-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+/* ---------- Arranque ---------- */
+const readyPromise = Store.init();   // carga datos (Sheets o demo) al abrir
+
+</script>
+</body>
+</html>
