@@ -91,6 +91,12 @@
   .sb-logout{margin-left:auto;color:#8fc3c5;padding:6px;border-radius:8px;display:flex}
   .sb-logout:hover{background:rgba(255,255,255,.1);color:#fff}
 
+  /* ---- Botón hamburguesa + fondo del menú móvil (ocultos en escritorio) ---- */
+  .menu-toggle{display:none;background:#fff;border:1px solid var(--line);width:42px;height:42px;border-radius:11px;align-items:center;justify-content:center;color:var(--ink-soft);flex-shrink:0}
+  .menu-toggle:hover{border-color:#bcd6d9}
+  .menu-toggle svg{width:20px;height:20px}
+  .sb-backdrop{display:none;position:fixed;inset:0;background:rgba(8,52,59,.5);z-index:55}
+
   .main{overflow-y:auto;height:100vh;background:var(--bg)}
   .topbar{position:sticky;top:0;z-index:4;background:rgba(241,246,247,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:18px 34px;display:flex;align-items:center;gap:18px}
   .topbar h2{font-size:22px;font-weight:700}
@@ -240,9 +246,21 @@
 
   @media(max-width:980px){
     .login-art{display:none}.login-panel{width:100%}
-    #app.show{grid-template-columns:1fr}.sidebar{display:none}
+    #app.show{grid-template-columns:1fr}
+    /* La barra lateral pasa a ser un menú deslizable (off-canvas) */
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:256px;z-index:60;
+      transform:translateX(-100%);transition:transform .28s ease;box-shadow:0 0 40px rgba(0,0,0,.35)}
+    .sidebar.open{transform:translateX(0)}
+    .sb-backdrop.show{display:block}
+    .menu-toggle{display:flex}
     .kpis{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}
     .search{display:none}.form-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){
+    .topbar{padding:14px 18px;gap:12px}
+    .content{padding:18px 18px 50px}
+    .kpis{grid-template-columns:1fr}
+    .topbar h2{font-size:18px}
   }
 </style>
 </head>
@@ -382,8 +400,14 @@
     </div>
   </aside>
 
+  <!-- Fondo oscuro que aparece detrás del menú en móvil -->
+  <div class="sb-backdrop" id="sbBackdrop" onclick="closeSidebar()"></div>
+
   <main class="main">
     <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
       <div><div class="crumb" id="crumb">Inicio</div><h2 id="page-title">Resumen general</h2></div>
       <div class="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
@@ -772,6 +796,16 @@ function pickRole(el){
 }
 document.getElementById('user-input').value = 'maria.gomez@granados.med.ec';
 
+/* ---------- Menú lateral deslizable (móvil) ---------- */
+function toggleSidebar(){
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('sbBackdrop').classList.toggle('show');
+}
+function closeSidebar(){
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sbBackdrop').classList.remove('show');
+}
+
 /* ---------- Alternar entre Iniciar sesión y Crear cuenta ---------- */
 App.regRole = 'paciente';
 function showRegister(){
@@ -858,6 +892,7 @@ function setSession(user){
   App.patientId = (role==='paciente' && user.refId) ? user.refId : ((Store.patients()[0]||{}).id || null);
 }
 function logout(){
+  closeSidebar();
   document.getElementById('app').classList.remove('show');
   document.getElementById('login').style.display = 'flex';
 }
@@ -885,6 +920,7 @@ function refreshBadges(){
 }
 
 function go(view){
+  closeSidebar();          // cierra el menú lateral al navegar (móvil)
   App.view = view;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
   const d = NAVDEF[view];
